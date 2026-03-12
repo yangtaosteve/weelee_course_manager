@@ -6,15 +6,15 @@
     <title>Markdown Directory Viewer</title>
     <style>
       :root {
-        --bg: #f4efe7;
-        --panel: rgba(255, 251, 245, 0.92);
-        --panel-strong: #fffdf8;
-        --text: #1f1a17;
-        --muted: #6d6257;
-        --border: rgba(97, 77, 59, 0.16);
-        --accent: #b24c2e;
-        --accent-soft: rgba(178, 76, 46, 0.12);
-        --shadow: 0 18px 50px rgba(84, 57, 36, 0.12);
+        --bg: #edf4ff;
+        --panel: rgba(248, 251, 255, 0.92);
+        --panel-strong: #fcfdff;
+        --text: #172033;
+        --muted: #5f6e8a;
+        --border: rgba(59, 91, 138, 0.16);
+        --accent: #2f6fdf;
+        --accent-soft: rgba(47, 111, 223, 0.12);
+        --shadow: 0 18px 50px rgba(36, 71, 126, 0.12);
         --mono: "SFMono-Regular", "Menlo", "Consolas", monospace;
         --sans: "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
       }
@@ -28,12 +28,12 @@
         height: 100vh;
         overflow: hidden;
         font-family: var(--sans);
-        font-size: 15px;
+        font-size: 12pt;
         color: var(--text);
         background:
-          radial-gradient(circle at top left, rgba(178, 76, 46, 0.18), transparent 32%),
-          radial-gradient(circle at right 20%, rgba(42, 104, 92, 0.16), transparent 28%),
-          linear-gradient(135deg, #f7f2ea 0%, #f1e5d4 100%);
+          radial-gradient(circle at top left, rgba(47, 111, 223, 0.18), transparent 32%),
+          radial-gradient(circle at right 20%, rgba(45, 136, 187, 0.14), transparent 28%),
+          linear-gradient(135deg, #f3f8ff 0%, #dfecff 100%);
       }
 
       .shell {
@@ -41,7 +41,7 @@
         grid-template-columns: 320px 1fr;
         gap: 20px;
         height: 100vh;
-        padding: 24px;
+        padding: 16px;
         overflow: hidden;
       }
 
@@ -61,41 +61,60 @@
       }
 
       .sidebar-header {
-        padding: 24px 24px 16px;
+        padding: 16px 16px 12px;
         border-bottom: 1px solid var(--border);
       }
 
       .sidebar-header h1 {
-        margin: 0 0 8px;
-        font-size: 1.28rem;
+        margin: 0 0 6px;
+        font-size: 1.05rem;
       }
 
       .sidebar-header p {
         margin: 0;
         color: var(--muted);
-        font-size: 0.94rem;
-        line-height: 1.5;
+        font-size: 0.82rem;
+        line-height: 1.35;
+      }
+
+      .directory-path {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.75rem;
+        line-height: 1.35;
+        word-break: break-all;
       }
 
       .controls {
         display: grid;
-        gap: 12px;
-        margin-top: 18px;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .filter-select {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--text);
+        font: inherit;
+        outline: none;
       }
 
       button {
         cursor: pointer;
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: 10px;
         font: inherit;
       }
 
       .primary-button {
-        padding: 11px 14px;
-        color: #fff7f2;
-        background: linear-gradient(135deg, #bd5737 0%, #93412b 100%);
+        padding: 8px 12px;
+        color: #f7fbff;
+        background: linear-gradient(135deg, #3d82f0 0%, #285fcd 100%);
         transition: transform 160ms ease, box-shadow 160ms ease;
-        box-shadow: 0 10px 24px rgba(178, 76, 46, 0.24);
+        box-shadow: 0 10px 24px rgba(47, 111, 223, 0.24);
       }
 
       .primary-button:hover {
@@ -103,44 +122,62 @@
       }
 
       .secondary-button {
-        padding: 9px 13px;
+        padding: 7px 10px;
         color: var(--accent);
         background: rgba(255, 255, 255, 0.6);
       }
 
-      .secondary-button:disabled {
+      .danger-button {
+        padding: 7px 10px;
+        color: #c03d52;
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .secondary-button:disabled,
+      .danger-button:disabled {
         cursor: not-allowed;
         opacity: 0.45;
       }
 
       .file-list {
-        padding: 12px;
+        padding: 8px;
         overflow-y: scroll;
         overflow-x: scroll;
         scrollbar-gutter: stable;
       }
 
       .file-list-empty {
-        padding: 16px;
+        padding: 10px;
         color: var(--muted);
+        font-size: 0.8rem;
       }
 
       .file-item {
         width: 100%;
-        padding: 11px 13px;
+        padding: 8px 10px;
         border: 0;
         background: transparent;
         color: var(--text);
         text-align: left;
-        border-radius: 14px;
+        border-radius: 10px;
         box-shadow: none;
-        font-size: 0.94rem;
+        font-size: 0.82rem;
       }
 
       .file-item:hover,
       .file-item.active {
         background: var(--accent-soft);
         color: var(--accent);
+      }
+
+      .file-item.dragging {
+        opacity: 0.45;
+      }
+
+      .file-item.drop-target {
+        outline: 2px dashed rgba(47, 111, 223, 0.45);
+        outline-offset: -2px;
+        background: rgba(47, 111, 223, 0.08);
       }
 
       .viewer {
@@ -155,29 +192,29 @@
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        padding: 22px 26px;
+        padding: 14px 16px;
         border-bottom: 1px solid var(--border);
       }
 
       .viewer-header h2 {
         margin: 0;
-        font-size: 1rem;
+        font-size: 0.88rem;
       }
 
       .viewer-header span {
         color: var(--muted);
-        font-size: 0.86rem;
+        font-size: 0.74rem;
       }
 
       .viewer-actions {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
       }
 
       .viewer-body {
         display: grid;
-        grid-template-rows: minmax(180px, var(--editor-height, 48%)) 14px minmax(180px, 1fr);
+        grid-template-columns: minmax(280px, var(--editor-size, 48%)) 14px minmax(280px, 1fr);
         min-height: 0;
         overflow: hidden;
       }
@@ -190,23 +227,19 @@
         overflow: hidden;
       }
 
-      .editor-pane {
-        border-bottom: 0;
-      }
-
       .pane-header {
-        padding: 12px 18px;
+        padding: 8px 12px;
         border-bottom: 1px solid var(--border);
         color: var(--muted);
-        font-size: 0.84rem;
+        font-size: 0.74rem;
         letter-spacing: 0.02em;
         background: rgba(255, 255, 255, 0.35);
       }
 
       .splitter {
         position: relative;
-        cursor: row-resize;
-        background: rgba(97, 77, 59, 0.08);
+        cursor: col-resize;
+        background: rgba(59, 91, 138, 0.08);
         transition: background 120ms ease;
       }
 
@@ -215,16 +248,16 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 54px;
-        height: 4px;
+        width: 4px;
+        height: 54px;
         border-radius: 999px;
-        background: rgba(178, 76, 46, 0.45);
+        background: rgba(47, 111, 223, 0.45);
         transform: translate(-50%, -50%);
       }
 
       .splitter:hover,
       .splitter.dragging {
-        background: rgba(178, 76, 46, 0.12);
+        background: rgba(47, 111, 223, 0.12);
       }
 
       .editor-input,
@@ -247,14 +280,14 @@
       .file-list::-webkit-scrollbar-track,
       .editor-input::-webkit-scrollbar-track,
       .preview-scroll::-webkit-scrollbar-track {
-        background: rgba(97, 77, 59, 0.08);
+        background: rgba(59, 91, 138, 0.08);
         border-radius: 999px;
       }
 
       .file-list::-webkit-scrollbar-thumb,
       .editor-input::-webkit-scrollbar-thumb,
       .preview-scroll::-webkit-scrollbar-thumb {
-        background: rgba(178, 76, 46, 0.45);
+        background: rgba(47, 111, 223, 0.45);
         border: 2px solid transparent;
         background-clip: padding-box;
         border-radius: 999px;
@@ -263,24 +296,24 @@
       .file-list::-webkit-scrollbar-thumb:hover,
       .editor-input::-webkit-scrollbar-thumb:hover,
       .preview-scroll::-webkit-scrollbar-thumb:hover {
-        background: rgba(178, 76, 46, 0.65);
+        background: rgba(47, 111, 223, 0.65);
         border: 2px solid transparent;
         background-clip: padding-box;
       }
 
       .editor-input {
         width: 100%;
-        padding: 18px 20px;
+        padding: 12px 14px;
         border: 0;
         resize: none;
-        background: rgba(255, 253, 248, 0.72);
+        background: rgba(252, 254, 255, 0.78);
         color: var(--text);
-        font: 14px/1.65 var(--mono);
+        font: 12px/1.45 var(--mono);
         outline: none;
       }
 
       .preview-scroll {
-        padding: 24px;
+        padding: 16px;
       }
 
       .empty {
@@ -289,14 +322,15 @@
         place-items: center;
         text-align: center;
         color: var(--muted);
-        line-height: 1.7;
+        line-height: 1.45;
+        font-size: 0.82rem;
       }
 
       .markdown {
         max-width: 880px;
         margin: 0 auto;
-        font-size: 0.95rem;
-        line-height: 1.68;
+        font-size: 0.82rem;
+        line-height: 1.5;
       }
 
       .markdown h1,
@@ -306,7 +340,31 @@
       .markdown h5,
       .markdown h6 {
         line-height: 1.3;
-        margin: 1.5em 0 0.7em;
+        margin: 1.1em 0 0.45em;
+      }
+
+      .markdown h1 {
+        font-size: 1.45rem;
+      }
+
+      .markdown h2 {
+        font-size: 1.2rem;
+      }
+
+      .markdown h3 {
+        font-size: 1.02rem;
+      }
+
+      .markdown h4 {
+        font-size: 0.92rem;
+      }
+
+      .markdown h5 {
+        font-size: 0.84rem;
+      }
+
+      .markdown h6 {
+        font-size: 0.78rem;
       }
 
       .markdown p,
@@ -314,23 +372,23 @@
       .markdown ol,
       .markdown blockquote,
       .markdown pre {
-        margin: 0 0 1rem;
+        margin: 0 0 0.7rem;
       }
 
       .markdown code {
         font-family: var(--mono);
-        font-size: 0.92em;
+        font-size: 0.88em;
         padding: 0.1em 0.3em;
         border-radius: 6px;
-        background: rgba(73, 58, 48, 0.08);
+        background: rgba(40, 95, 205, 0.08);
       }
 
       .markdown pre {
-        padding: 16px;
+        padding: 12px;
         overflow: auto;
-        border-radius: 18px;
-        background: #221c18;
-        color: #f7f2ea;
+        border-radius: 12px;
+        background: #14233f;
+        color: #edf4ff;
       }
 
       .markdown pre code {
@@ -340,9 +398,9 @@
       }
 
       .markdown blockquote {
-        padding: 0.2rem 0 0.2rem 1rem;
-        border-left: 4px solid rgba(178, 76, 46, 0.35);
-        color: #5f5144;
+        padding: 0.15rem 0 0.15rem 0.75rem;
+        border-left: 4px solid rgba(47, 111, 223, 0.35);
+        color: #53627d;
       }
 
       .markdown a {
@@ -350,9 +408,9 @@
       }
 
       .footnote {
-        margin-top: 14px;
+        margin-top: 8px;
         color: var(--muted);
-        font-size: 0.8rem;
+        font-size: 0.72rem;
         word-break: break-all;
       }
 
@@ -374,7 +432,17 @@
         }
 
         .viewer-body {
+          grid-template-columns: 1fr;
           grid-template-rows: minmax(220px, 1fr) 14px minmax(220px, 1fr);
+        }
+
+        .splitter {
+          cursor: row-resize;
+        }
+
+        .splitter::before {
+          width: 54px;
+          height: 4px;
         }
       }
     </style>
@@ -385,10 +453,16 @@
         <div class="sidebar-header">
           <h1>Markdown 目录浏览</h1>
           <p>选择本地目录后，递归扫描所有子目录中的 `.md` 文件。</p>
+          <div id="directory-path" class="directory-path">当前目录：未选择</div>
           <div class="controls">
             <button id="open-directory" class="primary-button" type="button">
               选择目录
             </button>
+            <select id="file-filter" class="filter-select">
+              <option value="all">全部 .md</option>
+              <option value="typesetter">仅 .typesetter.md</option>
+              <option value="writer">仅 .writer.md</option>
+            </select>
           </div>
           <div class="footnote" id="status">未选择目录</div>
         </div>
@@ -404,6 +478,9 @@
           <div class="viewer-actions">
             <button id="save-file" class="secondary-button" type="button" disabled>
               保存
+            </button>
+            <button id="delete-file" class="danger-button" type="button" disabled>
+              删除
             </button>
           </div>
         </header>
@@ -428,6 +505,7 @@
       </section>
     </main>
 
+    <script src="./node_modules/marked/lib/marked.umd.js"></script>
     <script src="./renderer.js"></script>
   </body>
   </html>
