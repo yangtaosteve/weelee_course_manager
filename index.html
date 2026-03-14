@@ -371,7 +371,8 @@
       .markdown ul,
       .markdown ol,
       .markdown blockquote,
-      .markdown pre {
+      .markdown pre,
+      .markdown table {
         margin: 0 0 0.7rem;
       }
 
@@ -405,6 +406,26 @@
 
       .markdown a {
         color: var(--accent);
+      }
+
+      .markdown table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .markdown th,
+      .markdown td {
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .markdown th {
+        background: rgba(47, 111, 223, 0.08);
+        font-weight: 600;
       }
 
       .footnote {
@@ -460,8 +481,9 @@
             </button>
             <select id="file-filter" class="filter-select">
               <option value="all">全部 .md</option>
-              <option value="typesetter">仅 .typesetter.md</option>
-              <option value="writer">仅 .writer.md</option>
+              <option value="writer">仅 .write.writer.md</option>
+              <option value="typesetter_markdown">仅 .typesetter_markdown.typesetter.md</option>
+              <option value="splitter">仅 .splitter.typesetter.md</option>
             </select>
           </div>
           <div class="footnote" id="status">未选择目录</div>

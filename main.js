@@ -9,10 +9,13 @@ function extractLeadingNumber(filename) {
 
 function getMarkdownVariant(filename) {
   const lowerName = filename.toLowerCase();
-  if (lowerName.endsWith(".typesetter.md")) {
-    return "typesetter";
+  if (lowerName.endsWith(".typesetter_markdown.typesetter.md")) {
+    return "typesetter_markdown";
   }
-  if (lowerName.endsWith(".writer.md")) {
+  if (lowerName.endsWith(".splitter.typesetter.md")) {
+    return "splitter";
+  }
+  if (lowerName.endsWith(".write.writer.md")) {
     return "writer";
   }
   if (lowerName.endsWith(".md")) {
@@ -29,7 +32,7 @@ function getBrickConfig(variant) {
     };
   }
 
-  if (variant === "typesetter") {
+  if (variant === "typesetter_markdown") {
     return {
       jsonName: "brick_typesetter.json",
       arrayKey: "post_drafts",
@@ -240,7 +243,10 @@ async function deleteMarkdownFile(rootPath, absolutePath) {
   const deletedDir = path.dirname(absolutePath);
   const deletedVariant = getMarkdownVariant(deletedName);
 
-  if (deletedVariant !== "writer" && deletedVariant !== "typesetter") {
+  if (
+    deletedVariant !== "writer" &&
+    deletedVariant !== "typesetter_markdown"
+  ) {
     throw new Error("当前只支持删除 writer/typesetter 文件并自动重排");
   }
 

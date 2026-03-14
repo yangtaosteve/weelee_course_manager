@@ -18,19 +18,29 @@ let currentDirectoryPath = "";
 let draggingFilePath = "";
 
 function isOrderEditingEnabled() {
-  return fileFilter.value === "writer" || fileFilter.value === "typesetter";
+  return (
+    fileFilter.value === "writer" ||
+    fileFilter.value === "typesetter_markdown" ||
+    fileFilter.value === "splitter"
+  );
 }
 
 function getFilteredFiles() {
-  if (fileFilter.value === "typesetter") {
+  if (fileFilter.value === "typesetter_markdown") {
     return markdownFiles.filter((file) =>
-      file.name.toLowerCase().endsWith(".typesetter.md")
+      file.name.toLowerCase().endsWith(".typesetter_markdown.typesetter.md")
+    );
+  }
+
+  if (fileFilter.value === "splitter") {
+    return markdownFiles.filter((file) =>
+      file.name.toLowerCase().endsWith(".splitter.typesetter.md")
     );
   }
 
   if (fileFilter.value === "writer") {
     return markdownFiles.filter((file) =>
-      file.name.toLowerCase().endsWith(".writer.md")
+      file.name.toLowerCase().endsWith(".write.writer.md")
     );
   }
 
